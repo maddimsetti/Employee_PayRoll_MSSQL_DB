@@ -305,4 +305,52 @@ ERROR 1364 (HY000): Field 'department' doesn't have a default value
 ------------------------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------------------------
 
+UC_9: EXTEND EMPLOYEE_PAYROLL TABLE TO HAVE BASIC_PAY, DEDUCTIONS, TAXABLE_PAY, INCOME_TAX, NET_PAY
 
+mysql> ALTER TABLE employee_payroll ADD deductions Double NOT NULL AFTER salary;
+Query OK, 0 rows affected (0.75 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> ALTER TABLE employee_payroll ADD taxable_pay Double NOT NULL AFTER deductions;
+Query OK, 0 rows affected (0.96 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> ALTER TABLE employee_payroll ADD tax Double NOT NULL AFTER taxable_pay;
+Query OK, 0 rows affected (0.63 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> ALTER TABLE employee_payroll ADD net_pay Double NOT NULL AFTER tax;
+Query OK, 0 rows affected (0.88 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> DESCRIBE employee_payroll;
++--------------+------------------+------+-----+---------+----------------+
+| Field        | Type             | Null | Key | Default | Extra          |
++--------------+------------------+------+-----+---------+----------------+
+| id           | int(10) unsigned | NO   | PRI | NULL    | auto_increment |
+| name         | varchar(150)     | NO   |     | NULL    |                |
+| phone_number | varchar(250)     | YES  |     | NULL    |                |
+| address      | varchar(250)     | YES  |     | TBD     |                |
+| department   | varchar(150)     | NO   |     | NULL    |                |
+| gender       | char(1)          | YES  |     | NULL    |                |
+| salary       | double           | NO   |     | NULL    |                |
+| deductions   | double           | NO   |     | NULL    |                |
+| taxable_pay  | double           | NO   |     | NULL    |                |
+| tax          | double           | NO   |     | NULL    |                |
+| net_pay      | double           | NO   |     | NULL    |                |
+| start        | date             | NO   |     | NULL    |                |
++--------------+------------------+------+-----+---------+----------------+
+12 rows in set (0.00 sec)
+
+mysql> SELECT * FROM employee_payroll;
++----+---------+--------------+---------+------------+--------+---------+------------+-------------+-----+---------+------------+
+| id | name    | phone_number | address | department | gender | salary  | deductions | taxable_pay | tax | net_pay | start      |
++----+---------+--------------+---------+------------+--------+---------+------------+-------------+-----+---------+------------+
+|  1 | Bill    | NULL         | NULL    |            | M      | 1000000 |          0 |           0 |   0 |       0 | 2010-10-30 |
+|  2 | Tersia  | NULL         | NULL    |            | F      | 3000000 |          0 |           0 |   0 |       0 | 2019-11-13 |
+|  3 | charlie | NULL         | NULL    |            | M      | 3000000 |          0 |           0 |   0 |       0 | 2020-05-21 |
++----+---------+--------------+---------+------------+--------+---------+------------+-------------+-----+---------+------------+
+3 rows in set (0.00 sec)
+
+----------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------
