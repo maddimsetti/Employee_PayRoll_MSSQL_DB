@@ -382,4 +382,193 @@ mysql> SELECT * FROM employee_payroll WHERE name = 'Tersia';
 -------------------------------------------------------------------------------------------------------------------------------------
 -------------------------------------------------------------------------------------------------------------------------------------
 
+UC_11: IMPLEMENT THE ER DIAGRAM INTO PAYROLL SERVICE DATABASE
+
+mysql> CREATE TABLE company
+    -> (
+    -> companyID        INT PRIMARY KEY,
+    -> companyName      VARCHAR(150)
+    -> );
+Query OK, 0 rows affected (0.38 sec)
+
+mysql> DESCRIBE company;
++-------------+--------------+------+-----+---------+-------+
+| Field       | Type         | Null | Key | Default | Extra |
++-------------+--------------+------+-----+---------+-------+
+| companyID   | int(11)      | NO   | PRI | NULL    |       |
+| companyName | varchar(150) | YES  |     | NULL    |       |
++-------------+--------------+------+-----+---------+-------+
+2 rows in set (0.00 sec)
+
+mysql> INSERT INTO company (companyID, companyName) VALUES
+    -> ( 145, 'BRIDGELABZ' );
+Query OK, 1 row affected (0.07 sec)
+
+mysql> SELECT * FROM company;
++-----------+-------------+
+| companyID | companyName |
++-----------+-------------+
+|       145 | BRIDGELABZ  |
++-----------+-------------+
+1 row in set (0.00 sec)
+
+mysql> CREATE TABLE employee
+    -> (
+    -> employeeID        INT PRIMARY KEY,
+    -> name              VARCHAR(150),
+    -> phone_Number      VARCHAR(150),
+    -> address           VARCHAR(250),
+    -> gender            VARCHAR(150),
+    -> companyID         INT,
+    -> FOREIGN KEY (companyID) REFERENCES company (companyID)
+    -> );
+Query OK, 0 rows affected (0.64 sec)
+
+mysql> DESCRIBE employee
+    -> ;
++--------------+--------------+------+-----+---------+-------+
+| Field        | Type         | Null | Key | Default | Extra |
++--------------+--------------+------+-----+---------+-------+
+| employeeID   | int(11)      | NO   | PRI | NULL    |       |
+| name         | varchar(150) | YES  |     | NULL    |       |
+| phone_Number | varchar(150) | YES  |     | NULL    |       |
+| address      | varchar(250) | YES  |     | NULL    |       |
+| gender       | varchar(150) | YES  |     | NULL    |       |
+| companyID    | int(11)      | YES  | MUL | NULL    |       |
++--------------+--------------+------+-----+---------+-------+
+6 rows in set (0.00 sec)
+
+mysql> INSERT INTO employee (employeeID,name,phone_Number,address,gender,companyID) VALUES
+    -> ( 111, 'Tersia', '9666471945', 'Mumbai', 'F', 145 );
+Query OK, 1 row affected (0.07 sec)
+
+mysql> SELECT * FROM employee;
++------------+--------+--------------+---------+--------+-----------+
+| employeeID | name   | phone_Number | address | gender | companyID |
++------------+--------+--------------+---------+--------+-----------+
+|        111 | Tersia | 9666471945   | Mumbai  | F      |       145 |
++------------+--------+--------------+---------+--------+-----------+
+1 row in set (0.00 sec)
+
+mysql> CREATE TABLE payroll
+    -> (
+    -> employeeID     INT,
+    -> Salary         Double NOT NULL,
+    -> deductions     Double NOT NULL,
+    -> taxable_pay    Double NOT NULL,
+    -> tax            Double NOT NULL,
+    -> net_pay        Double NOT NULL,
+    -> FOREIGN KEY (employeeID) REFERENCES employee (employeeID)
+    -> );
+Query OK, 0 rows affected (0.32 sec)
+
+mysql> DESCRIBE payroll;
++-------------+---------+------+-----+---------+-------+
+| Field       | Type    | Null | Key | Default | Extra |
++-------------+---------+------+-----+---------+-------+
+| employeeID  | int(11) | YES  | MUL | NULL    |       |
+| Salary      | double  | NO   |     | NULL    |       |
+| deductions  | double  | NO   |     | NULL    |       |
+| taxable_pay | double  | NO   |     | NULL    |       |
+| tax         | double  | NO   |     | NULL    |       |
+| net_pay     | double  | NO   |     | NULL    |       |
++-------------+---------+------+-----+---------+-------+
+6 rows in set (0.00 sec)
+
+mysql> INSERT INTO payroll (employeeID, Salary, deductions, taxable_pay, tax, net_pay) VALUES
+    -> ( 111, 3000000.00, 100000.00, 200000.00, 50000, 150000.00 );
+Query OK, 1 row affected (0.04 sec)
+
+mysql> SELECT * FROM payroll;
++------------+---------+------------+-------------+-------+---------+
+| employeeID | Salary  | deductions | taxable_pay | tax   | net_pay |
++------------+---------+------------+-------------+-------+---------+
+|        111 | 3000000 |     100000 |      200000 | 50000 |  150000 |
++------------+---------+------------+-------------+-------+---------+
+1 row in set (0.00 sec)
+
+mysql> CREATE TABLE department
+    -> (
+    -> departmentID    INT,
+    -> departmentName  VARCHAR(150),
+    -> PRIMARY KEY (departmentID, departmentName)
+    -> );
+Query OK, 0 rows affected (0.30 sec)
+
+mysql> DESCRIBE department
+    -> ;
++----------------+--------------+------+-----+---------+-------+
+| Field          | Type         | Null | Key | Default | Extra |
++----------------+--------------+------+-----+---------+-------+
+| departmentID   | int(11)      | NO   | PRI | NULL    |       |
+| departmentName | varchar(150) | NO   | PRI | NULL    |       |
++----------------+--------------+------+-----+---------+-------+
+2 rows in set (0.00 sec)
+
+mysql> INSERT INTO department (departmentID, departmentName) VALUES
+    -> ( 123, 'sales' ),
+    -> ( 234, 'marketing' );
+Query OK, 2 rows affected (0.06 sec)
+Records: 2  Duplicates: 0  Warnings: 0
+
+mysql> SELECT * FROM department;
++--------------+----------------+
+| departmentID | departmentName |
++--------------+----------------+
+|          123 | sales          |
+|          234 | marketing      |
++--------------+----------------+
+2 rows in set (0.00 sec)
+
+mysql> CREATE TABLE employeeDepartment
+    -> (
+    -> employeeID    INT,
+    -> departmentID  INT,
+    -> PRIMARY KEY (employeeID, departmentID),
+    -> FOREIGN KEY (employeeID) REFERENCES employee (employeeID),
+    -> FOREIGN KEY (departmentID) REFERENCES department (departmentID)
+    -> );
+Query OK, 0 rows affected (0.63 sec)
+
+mysql> DESCRIBE employeeDepartment
+    -> ;
++--------------+---------+------+-----+---------+-------+
+| Field        | Type    | Null | Key | Default | Extra |
++--------------+---------+------+-----+---------+-------+
+| employeeID   | int(11) | NO   | PRI | NULL    |       |
+| departmentID | int(11) | NO   | PRI | NULL    |       |
++--------------+---------+------+-----+---------+-------+
+2 rows in set (0.00 sec)
+
+mysql> INSERT INTO employeeDepartment (employeeID, departmentID) VALUES
+    -> ( 111,123 )
+    -> ;
+Query OK, 1 row affected (0.06 sec)
+
+mysql> INSERT INTO employeeDepartment (employeeID, departmentID) VALUES
+    -> ( 111,234 );
+Query OK, 1 row affected (0.08 sec)
+
+mysql> SELECT * FROM employeeDepartment;
++------------+--------------+
+| employeeID | departmentID |
++------------+--------------+
+|        111 |          123 |
+|        111 |          234 |
++------------+--------------+
+2 rows in set (0.00 sec)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
